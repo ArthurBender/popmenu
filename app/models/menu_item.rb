@@ -1,3 +1,4 @@
 class MenuItem < ApplicationRecord
-  belongs_to :menu
+  has_many :menu_entries, dependent: :destroy
+  has_many :menus, through: :menu_entries
 end
