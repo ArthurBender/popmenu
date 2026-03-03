@@ -1,9 +1,9 @@
 class Api::V1::MenuItemsController < ApplicationController
   def index
-    render json: MenuItem.all
+    render json: Menu.find(params[:menu_id]).menu_items
   end
 
   def show
-    render json: MenuItem.find(params[:id])
+    render json: Menu.find(params[:menu_id]).menu_items.find(params[:id])
   end
 end
