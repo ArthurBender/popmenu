@@ -1,0 +1,40 @@
+{
+  "restaurants": [
+    {
+      "title": "Poppo's Cafe",
+      "description": "Place for burgers and salads",
+      "menus": [
+        {
+          "name": "lunch",
+          "items": [
+            {
+              "name": "Burger",
+              "price": 9.00,
+              "unit": "USD"
+            },
+            {
+              "name": "Small Salad",
+              "price": 5.00,
+              "unit": "USD"
+            }
+          ]
+        },
+        {
+          "name": "dinner",
+          "items": [
+            {
+              "name": "Burger",
+              "price": 15.00,
+              "unit": "USD"
+            },
+            {
+              "name": "Large Salad",
+              "price": 8.00,
+              "unit": "USD"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

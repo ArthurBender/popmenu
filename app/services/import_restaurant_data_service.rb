@@ -23,7 +23,7 @@ class ImportRestaurantDataService
 
     final_data = compare_data(count_data, initial_data)
 
-    final_data.merge(errors: @errors)
+    final_data.merge("errors" => @errors)
   end
 
   private
