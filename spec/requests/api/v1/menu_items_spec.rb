@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::MenuItems", type: :request do
   before do
-    menu_entry = create(:menu_entry)
+    @menu_entry = create(:menu_entry)
 
-    @menu = menu_entry.menu
-    @menu_item = menu_entry.menu_item
+    @menu = @menu_entry.menu
+    @menu_item = @menu_entry.menu_item
   end
 
   describe "index" do
@@ -35,6 +35,7 @@ RSpec.describe "Api::V1::MenuItems", type: :request do
 
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["name"]).to eq(@menu_item.name)
+      expect(JSON.parse(response.body)["price"]).to eq(@menu_entry.price)
     end
 
     it "returns a 404 if the menu item does not exist" do

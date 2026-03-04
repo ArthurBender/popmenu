@@ -2,11 +2,14 @@ class Api::V1::MenuItemsController < ApplicationController
   before_action :set_menu
 
   def index
-    render json: @menu.menu_items
+    render json: @menu.menu_entries, methods: :name
   end
 
   def show
-    render json: @menu.menu_items.find(params[:id])
+    item = @menu.menu_entries.find_by(menu_item_id: params[:id])
+    raise ActiveRecord::RecordNotFound if item.nil?
+
+    render json: item, methods: :name
   end
 
   private
