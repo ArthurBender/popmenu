@@ -1,5 +1,10 @@
 separator = "-" * 50
 
+unless Rails.env.development?
+  puts "This seed file should only be used in development", separator
+  return
+end
+
 models = %w[Restaurant Menu MenuItem MenuEntry]
 
 puts separator
