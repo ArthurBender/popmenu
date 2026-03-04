@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": ["restaurants"],
+  "additionalProperties": false,
+  "properties": {
+    "restaurants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "menus"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "menus": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "menu_items": {
+                  "$ref": "#/definitions/items"
+                },
+                "dishes": {
+                  "$ref": "#/definitions/items"
+                }
+              },
+              "oneOf": [
+                { "required": ["menu_items"] },
+                { "required": ["dishes"] }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "price"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}
