@@ -14,13 +14,15 @@ RSpec.describe ImportRestaurantDataService do
         .and change(MenuItem, :count).by(6)
         .and change(MenuEntry, :count).by(7)
 
-      expect(result).to eq({
+      expect(result["totals"]).to eq({
         "restaurants" => 2,
         "menus" => 4,
         "menu_items" => 6,
         "menu_entries" => 7,
         "errors" => 1
       })
+      expect(result["logs"]).to be_an(Array)
+      expect(result["logs"].size).to eq(8)
     end
 
     it "raises for the invalid file" do

@@ -8,6 +8,7 @@ class ImportRestaurantDataService
   def initialize(file)
     @file = file
     @errors = 0
+    @logs = []
   end
 
   def call
@@ -27,7 +28,10 @@ class ImportRestaurantDataService
 
     final_data = compare_data(count_data, initial_data)
 
-    final_data.merge("errors" => @errors)
+    {
+      "logs" => @logs,
+      "totals" => final_data.merge("errors" => @errors)
+    }
   end
 
   private
@@ -65,9 +69,30 @@ class ImportRestaurantDataService
             menu_entry.price = item_data["price"]
             log("Added entry for #{item_data["name"]} with price #{item_data["price"]} to menu #{menu_data["name"]}.")
           end
+
+          log(
+            "Imported menu item.",
+            item_log: {
+              status: "success",
+              restaurant: restaurant_data["name"],
+              menu: menu_data["name"],
+              item: item_data["name"],
+              price: item_data["price"]
+            }
+          )
         rescue ActiveRecord::RecordInvalid => e
           @errors += 1
-          log("Error adding entry for #{item_data["name"]} with price #{item_data["price"]} to menu #{menu_data["name"]}: #{e.message}.", true)
+          log(
+            "Error adding entry for #{item_data["name"]} with price #{item_data["price"]} to menu #{menu_data["name"]}: #{e.message}.",
+            error: true,
+            item_log: {
+              status: "failed",
+              restaurant: restaurant_data["name"],
+              menu: menu_data["name"],
+              item: item_data["name"],
+              price: item_data["price"]
+            }
+          )
         end
       end
     end
@@ -83,13 +108,23 @@ class ImportRestaurantDataService
     result
   end
 
-  def log(message, error = false)
-    message = "[Conversion Tool] #{message}"
+  def log(message, error: false, item_log: nil)
+    formatted_message = "[Conversion Tool] #{message}"
     if error
-      Rails.logger.error(message)
-      return
+      Rails.logger.error(formatted_message)
+    else
+      Rails.logger.info(formatted_message)
     end
 
-    Rails.logger.info(message)
+    return if item_log.nil?
+
+    @logs << {
+      "status" => item_log.fetch(:status),
+      "restaurant" => item_log.fetch(:restaurant),
+      "menu" => item_log.fetch(:menu),
+      "item" => item_log.fetch(:item),
+      "price" => item_log.fetch(:price),
+      "message" => message
+    }
   end
 end
