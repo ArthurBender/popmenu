@@ -44,6 +44,8 @@ RSpec.describe "Api::V1::Menus", type: :request do
       other_restaurant = create(:restaurant)
 
       get api_v1_restaurant_menu_path(restaurant_id: other_restaurant.id, id: @menu)
+
+      expect(response).to have_http_status(404)
     end
   end
 end
