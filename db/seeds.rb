@@ -18,19 +18,15 @@ puts "Creating menus and menu items...", separator
   2.times do |j|
     menu = restaurant.menus.create(name: "Menu #{j}")
 
-    5.times do
-      menu.menu_items.create(
-        name: Faker::Food.dish,
-        price: rand(1..10)
-      )
+    5.times do |k|
+      item = MenuItem.create(name: Faker::Food.dish + " #{j}#{i}#{k}")
+
+      MenuEntry.create(menu_item_id: item.id, menu: menu, price: rand(1..10))
     end
 
     # Multiple menu items
     if restaurant.menus.count > 1
-      MenuEntry.create(
-        menu_item: menu.menu_items.last,
-        menu: restaurant.menus.first
-      )
+      MenuEntry.create(menu_item_id: menu.menu_items.last.id, menu: restaurant.menus.first, price: rand(1..10))
     end
   end
 end
