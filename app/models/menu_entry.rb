@@ -2,6 +2,7 @@ class MenuEntry < ApplicationRecord
   belongs_to :menu
   belongs_to :menu_item
 
+  validates :menu_id, uniqueness: { scope: :menu_item_id }
   validate :menu_restaurant_matches
 
   private
