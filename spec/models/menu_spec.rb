@@ -27,13 +27,13 @@ RSpec.describe Menu, type: :model do
     end
 
     it "should not destroy menu items when destroyed" do
-      create(:menu_item, menus: [ @menu ])
+      create(:menu_entry, menu: @menu)
 
       expect { @menu.destroy }.to change { MenuItem.count }.by(0)
     end
 
     it "should destroy menu entries when destroyed" do
-      create(:menu_item, menus: [ @menu ])
+      create(:menu_entry, menu: @menu)
 
       expect { @menu.destroy }.to change { MenuEntry.count }.by(-1)
     end

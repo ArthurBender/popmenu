@@ -16,22 +16,10 @@ RSpec.describe MenuItem, type: :model do
       expect { menu_item.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it "should not create a menu item without a price" do
-      menu_item = build(:menu_item, price: nil)
-
-      expect { menu_item.save! }.to raise_error(ActiveRecord::RecordInvalid)
-    end
-
     it "should not allow duplicated names" do
       menu_item = create(:menu_item, name: "Item 1")
 
       expect { create(:menu_item, name: "Item 1") }.to raise_error(ActiveRecord::RecordInvalid)
-    end
-
-    it "should not allow negative prices" do
-      menu_item = build(:menu_item, price: -1)
-
-      expect { menu_item.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
@@ -47,7 +35,10 @@ RSpec.describe MenuItem, type: :model do
       menu = create(:menu, restaurant: restaurant)
       other_menu = create(:menu, restaurant: restaurant)
 
-      menu_item = create(:menu_item, menus: [ menu, other_menu ])
+      menu_item = create(:menu_item)
+
+      create(:menu_entry, menu: menu, menu_item: menu_item)
+      create(:menu_entry, menu: other_menu, menu_item: menu_item)
 
       expect(menu_item.menus).to include(menu, other_menu)
     end
@@ -59,10 +50,9 @@ RSpec.describe MenuItem, type: :model do
     end
 
     it "should destroy menu entries when destroyed" do
-      menu = create(:menu)
-      menu_item = create(:menu_item, menus: [ menu ])
+      menu_entry = create(:menu_entry)
 
-      expect { menu_item.destroy }.to change { MenuEntry.count }.by(-1)
+      expect { menu_entry.menu_item.destroy }.to change { MenuEntry.count }.by(-1)
     end
   end
 end

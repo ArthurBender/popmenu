@@ -10,6 +10,18 @@ RSpec.describe MenuEntry, type: :model do
       expect(menu_entry).to be_valid
     end
 
+    it "should not create a menu entry without a price" do
+      menu_entry = build(:menu_entry, price: nil)
+
+      expect { menu_entry.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it "should not create a menu entry with negative price" do
+      menu_entry = build(:menu_entry, price: -1)
+
+      expect { menu_entry.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
     it "should not create a menu entry without a menu" do
       menu_entry = build(:menu_entry, menu: nil)
 
