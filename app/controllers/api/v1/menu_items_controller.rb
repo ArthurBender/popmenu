@@ -9,6 +9,8 @@ class Api::V1::MenuItemsController < ApplicationController
     render json: @menu.menu_items.find(params[:id])
   end
 
+  private
+
   def set_menu
     menus = Menu.where(id: params[:menu_id], restaurant_id: params[:restaurant_id]).includes(:menu_items)
     raise ActiveRecord::RecordNotFound if menus.empty?
