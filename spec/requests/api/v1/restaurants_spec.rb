@@ -20,6 +20,7 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
 
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["name"]).to eq(@restaurant.name)
+      expect(JSON.parse(response.body)["menus"]).to be_an(Array)
     end
 
     it "returns a 404 if the restaurant does not exist" do

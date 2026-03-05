@@ -26,6 +26,7 @@ RSpec.describe "Api::V1::Menus", type: :request do
 
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["name"]).to eq(@menu.name)
+      expect(JSON.parse(response.body)["menu_items"]).to be_an(Array)
     end
 
     it "returns a 404 if the menu does not exist" do
