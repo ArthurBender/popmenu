@@ -37,7 +37,7 @@ RSpec.describe "Api::V1::MenuItems", type: :request do
       body = JSON.parse(response.body)
 
       expect(body["name"]).to eq(@menu_item.name)
-      expect(body["price"]).to eq(@menu_entry.price.to_s)
+      expect(body["price"]).to eq(format("%.2f", @menu_entry.price))
     end
 
     it "returns a 404 if the menu item does not exist" do
