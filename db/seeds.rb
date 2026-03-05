@@ -24,7 +24,7 @@ puts "Creating menus and menu items...", separator
     menu = restaurant.menus.create(name: "Menu #{j}")
 
     5.times do |k|
-      item = MenuItem.create(name: Faker::Food.dish + " #{j}#{i}#{k}")
+      item = MenuItem.create(name: Faker::Food.dish + " #{j}#{i}#{k}", restaurant: restaurant)
 
       MenuEntry.create(menu_item_id: item.id, menu: menu, price: rand(1..10))
     end
