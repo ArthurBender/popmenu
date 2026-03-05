@@ -8,6 +8,7 @@ RSpec.describe "Api::V1::Imports", type: :request do
       expect(response).to have_http_status(201)
       body = JSON.parse(response.body)
 
+      expect(body.dig("resources_created", "success")).to eq(true)
       expect(body.dig("resources_created", "logs")).to be_an(Array)
       expect(body.dig("resources_created", "logs")&.size).to eq(8)
       expect(body.dig("resources_created", "totals")).to eq({

@@ -21,6 +21,7 @@ RSpec.describe ImportRestaurantDataService do
         "menu_entries" => 8,
         "errors" => 0
       })
+      expect(result["success"]).to eq(true)
       expect(result["logs"]).to be_an(Array)
       expect(result["logs"].size).to eq(8)
     end
