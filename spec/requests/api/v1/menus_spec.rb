@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Menus", type: :request do
   before do
     @menu = create(:menu)
+    @menu_entry = create(:menu_entry, menu: @menu, price: 12.5)
   end
 
   describe "index" do
@@ -25,8 +26,18 @@ RSpec.describe "Api::V1::Menus", type: :request do
       get api_v1_restaurant_menu_path(restaurant_id: @menu.restaurant_id, id: @menu)
 
       expect(response).to have_http_status(200)
-      expect(JSON.parse(response.body)["name"]).to eq(@menu.name)
-      expect(JSON.parse(response.body)["menu_items"]).to be_an(Array)
+      body = JSON.parse(response.body)
+
+      expect(body["id"]).to eq(@menu.id)
+      expect(body["name"]).to eq(@menu.name)
+      expect(body["menu_items"]).to be_an(Array)
+      expect(body["menu_items"].size).to eq(1)
+
+      first_item = body["menu_items"].first
+      expect(first_item.keys).to contain_exactly("id", "name", "price", "created_at", "updated_at")
+      expect(first_item["id"]).to eq(@menu_entry.menu_item_id)
+      expect(first_item["name"]).to eq(@menu_entry.menu_item.name)
+      expect(first_item["price"]).to eq(format("%.2f", @menu_entry.price))
     end
 
     it "returns a 404 if the menu does not exist" do
