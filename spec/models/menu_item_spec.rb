@@ -16,10 +16,10 @@ RSpec.describe MenuItem, type: :model do
       expect { menu_item.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it "should not allow duplicated names" do
+    it "should not allow duplicated names for same restaurant" do
       menu_item = create(:menu_item, name: "Item 1")
 
-      expect { create(:menu_item, name: "Item 1") }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { create(:menu_item, name: "Item 1", restaurant: menu_item.restaurant) }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
@@ -31,16 +31,10 @@ RSpec.describe MenuItem, type: :model do
     end
 
     it "should be able to belong to many menus" do
-      restaurant = create(:restaurant)
-      menu = create(:menu, restaurant: restaurant)
-      other_menu = create(:menu, restaurant: restaurant)
+      menu_entry = create(:menu_entry)
+      other_entry = create(:menu_entry, menu: create(:menu, restaurant: menu_entry.menu.restaurant), menu_item: menu_entry.menu_item)
 
-      menu_item = create(:menu_item)
-
-      create(:menu_entry, menu: menu, menu_item: menu_item)
-      create(:menu_entry, menu: other_menu, menu_item: menu_item)
-
-      expect(menu_item.menus).to include(menu, other_menu)
+      expect(menu_entry.menu_item.menus).to include(menu_entry.menu, other_entry.menu)
     end
 
     it "should not destroy menu when destroyed" do

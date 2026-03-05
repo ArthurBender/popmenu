@@ -11,15 +11,15 @@ RSpec.describe ImportRestaurantDataService do
         result = described_class.call(file)
       }.to change(Restaurant, :count).by(2)
         .and change(Menu, :count).by(4)
-        .and change(MenuItem, :count).by(6)
-        .and change(MenuEntry, :count).by(7)
+        .and change(MenuItem, :count).by(7)
+        .and change(MenuEntry, :count).by(8)
 
       expect(result["totals"]).to eq({
         "restaurants" => 2,
         "menus" => 4,
-        "menu_items" => 6,
-        "menu_entries" => 7,
-        "errors" => 1
+        "menu_items" => 7,
+        "menu_entries" => 8,
+        "errors" => 0
       })
       expect(result["logs"]).to be_an(Array)
       expect(result["logs"].size).to eq(8)

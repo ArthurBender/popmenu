@@ -34,8 +34,10 @@ RSpec.describe "Api::V1::MenuItems", type: :request do
       get api_v1_restaurant_menu_menu_item_path(restaurant_id: @menu.restaurant_id, menu_id: @menu.id, id: @menu_item.id)
 
       expect(response).to have_http_status(200)
-      expect(JSON.parse(response.body)["name"]).to eq(@menu_item.name)
-      expect(JSON.parse(response.body)["price"]).to eq(@menu_entry.price)
+      body = JSON.parse(response.body)
+
+      expect(body["name"]).to eq(@menu_item.name)
+      expect(body["price"]).to eq(@menu_entry.price.to_s)
     end
 
     it "returns a 404 if the menu item does not exist" do

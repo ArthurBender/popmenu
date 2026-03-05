@@ -60,7 +60,7 @@ class ImportRestaurantDataService
       end
 
       (menu_data["menu_items"] || menu_data["dishes"]).each do |item_data|
-        menu_item = MenuItem.find_or_create_by!(name: item_data["name"]) do
+        menu_item = MenuItem.find_or_create_by!(name: item_data["name"], restaurant: restaurant) do
           log("Created item #{item_data["name"]}.")
         end
 

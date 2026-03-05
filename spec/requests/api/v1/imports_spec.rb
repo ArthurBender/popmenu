@@ -13,9 +13,9 @@ RSpec.describe "Api::V1::Imports", type: :request do
       expect(body.dig("resources_created", "totals")).to eq({
         "restaurants" => 2,
         "menus" => 4,
-        "menu_items" => 6,
-        "menu_entries" => 7,
-        "errors" => 1
+        "menu_items" => 7,
+        "menu_entries" => 8,
+        "errors" => 0
       })
     end
 

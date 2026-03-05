@@ -11,7 +11,7 @@ class MenuEntry < ApplicationRecord
   private
 
   def menu_restaurant_matches
-    return if menu.restaurant_id == menu_item.restaurant_id
+    return if menu&.restaurant_id == menu_item&.restaurant_id
 
     errors.add(:menu_item, "must belong only to menus from the item restaurant")
   end
