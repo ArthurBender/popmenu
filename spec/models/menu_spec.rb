@@ -15,6 +15,12 @@ RSpec.describe Menu, type: :model do
 
       expect { menu.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
+
+    it "should not allow duplicated names for same restaurant" do
+      menu = create(:menu, name: "Menu 1")
+
+      expect { create(:menu, name: "Menu 1", restaurant: menu.restaurant) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 
   describe "associations" do

@@ -16,6 +16,12 @@ RSpec.describe MenuItem, type: :model do
       expect { menu_item.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
+    it "should not create a menu item without a restaurant" do
+      menu_item = build(:menu_item, restaurant: nil)
+
+      expect { menu_item.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
     it "should not allow duplicated names for same restaurant" do
       menu_item = create(:menu_item, name: "Item 1")
 
