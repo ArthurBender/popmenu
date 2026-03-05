@@ -3,13 +3,11 @@ class Api::V1::MenusController < ApplicationController
     restaurant = Restaurant.where(id: params[:restaurant_id]).includes(:menus)
     raise ActiveRecord::RecordNotFound if restaurant.empty?
 
-    render json: restaurant.first.menus
+    @menus = restaurant.first.menus
   end
 
   def show
-    menu = Menu.where(id: params[:id], restaurant_id: params[:restaurant_id])
-    raise ActiveRecord::RecordNotFound if menu.empty?
-
-    render json: menu.first
+    @menu = Menu.includes(:menu_entries, :menu_items).find_by(id: params[:id], restaurant_id: params[:restaurant_id])
+    raise ActiveRecord::RecordNotFound if @menu.nil?
   end
 end
