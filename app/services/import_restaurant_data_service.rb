@@ -22,7 +22,7 @@ class ImportRestaurantDataService
 
     initial_data = count_data
 
-    data.fetch("restaurants").each do |restaurant_data|
+    remove_duplicated(data.fetch("restaurants")).each do |restaurant_data|
       import_restaurant(restaurant_data)
     end
 
@@ -54,12 +54,12 @@ class ImportRestaurantDataService
       log("Created restaurant #{restaurant_data["name"]}.")
     end
 
-    restaurant_data["menus"].each do |menu_data|
+    remove_duplicated(restaurant_data["menus"]).each do |menu_data|
       menu = restaurant.menus.find_or_create_by!(name: menu_data["name"]) do
         log("Created menu #{menu_data["name"]}.")
       end
 
-      (menu_data["menu_items"] || menu_data["dishes"]).each do |item_data|
+      remove_duplicated(menu_data["menu_items"] || menu_data["dishes"]).each do |item_data|
         menu_item = MenuItem.find_or_create_by!(name: item_data["name"], restaurant: restaurant) do
           log("Created item #{item_data["name"]}.")
         end
@@ -71,7 +71,7 @@ class ImportRestaurantDataService
           end
 
           log(
-            "Imported menu item.",
+            "Imported menu item #{item_data["name"]} with price #{item_data["price"]} to menu #{menu_data["name"]}.",
             item_log: {
               status: "success",
               restaurant: restaurant_data["name"],
@@ -95,6 +95,20 @@ class ImportRestaurantDataService
           )
         end
       end
+    end
+  end
+
+  def remove_duplicated(data)
+    uniq_names = []
+    data.filter do |data_entry|
+      already_exists = uniq_names.include?(data_entry["name"])
+      uniq_names << data_entry["name"]
+
+      if already_exists
+        log("#{data_entry["name"]} already exists in this list. Skipping.")
+      end
+
+      !already_exists
     end
   end
 

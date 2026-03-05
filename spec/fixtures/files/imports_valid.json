@@ -44,6 +44,10 @@
             {
               "name": "Burger",
               "price": 9.00
+            },
+            {
+              "name": "Chicken Wings",
+              "price": 9.00
             }
           ]
         },
