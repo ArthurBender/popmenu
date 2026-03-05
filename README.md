@@ -54,7 +54,9 @@ bundle exec rubocop
 
 ### Restaurant
 
-A restaurant has many menus.
+A restaurant has many menus and many menu items.
+
+Restaurant names are unique.
 
 ### Menu
 
@@ -62,11 +64,15 @@ A menu belongs to a restaurant.
 
 A menu has many menu entries and many menu items through menu entries.
 
+Menu names are unique per restaurant.
+
 ### MenuItem
 
 A menu item represents the shared item identity.
 
 A menu item can belong to many menus in the same restaurant through menu entries.
+
+Item names are unique per restaurant.
 
 ### MenuEntry
 
@@ -81,7 +87,7 @@ It stores the item price for that specific menu.
 - `GET /api/v1/restaurants`
 - `GET /api/v1/restaurants/:id`
 
-Example response:
+`index` example response:
 
 ```json
 [
@@ -94,23 +100,61 @@ Example response:
 ]
 ```
 
+`show` example response (cascaded):
+
+```json
+{
+  "id": 1,
+  "name": "Poppo's Cafe",
+  "created_at": "2026-03-04T12:00:00.000Z",
+  "updated_at": "2026-03-04T12:00:00.000Z",
+  "menus": [
+    {
+      "id": 1,
+      "name": "lunch",
+      "created_at": "2026-03-04T12:00:00.000Z",
+      "updated_at": "2026-03-04T12:00:00.000Z"
+    }
+  ]
+}
+```
+
 ### Menus
 
 - `GET /api/v1/restaurants/:restaurant_id/menus`
 - `GET /api/v1/restaurants/:restaurant_id/menus/:id`
 
-Example response:
+`index` example response:
 
 ```json
 [
   {
     "id": 1,
     "name": "lunch",
-    "restaurant_id": 1,
     "created_at": "2026-03-04T12:00:00.000Z",
     "updated_at": "2026-03-04T12:00:00.000Z"
   }
 ]
+```
+
+`show` example response (cascaded):
+
+```json
+{
+  "id": 1,
+  "name": "lunch",
+  "created_at": "2026-03-04T12:00:00.000Z",
+  "updated_at": "2026-03-04T12:00:00.000Z",
+  "menu_items": [
+    {
+      "id": 1,
+      "name": "Burger",
+      "price": "9.00",
+      "created_at": "2026-03-04T12:00:00.000Z",
+      "updated_at": "2026-03-04T12:00:00.000Z"
+    }
+  ]
+}
 ```
 
 ### Menu Items
@@ -118,20 +162,16 @@ Example response:
 - `GET /api/v1/restaurants/:restaurant_id/menus/:menu_id/menu_items`
 - `GET /api/v1/restaurants/:restaurant_id/menus/:menu_id/menu_items/:id`
 
-Example response:
+`index` and `show` example response:
 
 ```json
-[
-  {
-    "id": 1,
-    "menu_id": 1,
-    "menu_item_id": 1,
-    "price": 9.0,
-    "created_at": "2026-03-04T12:00:00.000Z",
-    "updated_at": "2026-03-04T12:00:00.000Z",
-    "name": "Burger"
-  }
-]
+{
+  "id": 1,
+  "name": "Burger",
+  "price": "9.00",
+  "created_at": "2026-03-04T12:00:00.000Z",
+  "updated_at": "2026-03-04T12:00:00.000Z"
+}
 ```
 
 ## Conversion Tool
@@ -139,6 +179,8 @@ Example response:
 The project includes a JSON conversion tool that imports restaurant data into the database.
 
 It accepts files compatible with the provided guideline structure, including both `menu_items` and `dishes`.
+
+The conversion is designed for partial success: valid records are imported, invalid records are logged as failed, and the process continues.
 
 ### HTTP endpoint
 
@@ -165,6 +207,7 @@ bin/rake imports:process[guidelines/restaurant_data.json]
 
 The import response contains:
 
+- `success`: overall success/fail result (`false` when any item fails)
 - `logs`: one entry per processed menu item
 - `totals`: number of created records plus the number of import errors
 
@@ -173,6 +216,7 @@ Example response:
 ```json
 {
   "resources_created": {
+    "success": true,
     "logs": [
       {
         "status": "success",
@@ -180,24 +224,24 @@ Example response:
         "menu": "lunch",
         "item": "Burger",
         "price": 9.0,
-        "message": "Imported menu item."
-      },
-      {
-        "status": "failed",
-        "restaurant": "Casa del Poppo",
-        "menu": "lunch",
-        "item": "Burger",
-        "price": 9.0,
-        "message": "Error adding entry for Burger with price 9.0 to menu lunch: Validation failed: Menu item must belong only to menus from the same restaurant."
+        "message": "Imported menu item Burger with price 9.0 to menu lunch."
       }
     ],
     "totals": {
       "restaurants": 2,
       "menus": 4,
-      "menu_items": 6,
-      "menu_entries": 7,
-      "errors": 1
+      "menu_items": 7,
+      "menu_entries": 8,
+      "errors": 0
     }
   }
 }
 ```
+
+## Assumptions
+
+- Restaurant names are unique.
+- Menu names are unique inside each restaurant.
+- Item names are unique inside each restaurant.
+- In the conversion tool, duplicated resources keep only their first appearance.
+- `show` endpoints return cascaded data (restaurant includes menus, menu includes menu items).
